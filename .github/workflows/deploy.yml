@@ -1,0 +1,31 @@
+name: Build and Deploy on Merge
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SERVER_IP: ${{ secrets.SERVER_IP }}
+  SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USERNAME }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          command_timeout: 200m
+          script: |
+            cd ${{github.event.repository.name}}
+            git pull origin main
+            yarn run build
+            pm2 startOrReload ecosystem.config.js --env production
