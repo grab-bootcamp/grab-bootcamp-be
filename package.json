@@ -29,6 +29,7 @@
     "@nestjs/mongoose": "^9.2.2",
     "@nestjs/platform-express": "^9.0.0",
     "cache-manager": "^5.2.0",
+    "helmet": "^6.1.5",
     "joi": "^17.9.1",
     "mongoose": "^7.0.4",
     "nanoid": "3.3.4",
