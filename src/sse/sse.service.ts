@@ -7,10 +7,11 @@ import { nanoid } from 'nanoid';
 export class SseService {
   private events = new Subject<MessageEvent>();
 
-  addEvent(data: string | object) {
+  addEvent(messageEvent: MessageEvent) {
     this.events.next({
-      data,
+      ...messageEvent,
       id: nanoid(),
+      retry: 3000,
     });
   }
 
