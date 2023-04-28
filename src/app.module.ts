@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SseModule } from './sse/sse.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { FwiModule } from './fwi/fwi.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -29,6 +30,7 @@ import * as Joi from 'joi';
       isGlobal: true,
     }),
     SseModule,
+    FwiModule,
   ],
 })
 export class AppModule { }
