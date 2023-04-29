@@ -3,50 +3,61 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class FwiService {
   /**
-   * Calculate the Fine Fuel Moisture Code (FFMC)
+   * Calculate the Intermediate Fine Fuel Moisture Code (FFMC)
+   * 
+   * Warning: this function return the Intermediate FFMC, not the FFMC because [m] is required for some other calculations
    * @param Fo Fine Fuel Moisture Code (FFMC) at previous time step
    * @param H 24h fuel moisture content
    * @param T Temperature
    * @param W Wind speed
    * @param ro Rainfall
-   * @returns Fine Fuel Moisture Code (FFMC) at current time step
+   * @returns Intermediate Fine Fuel Moisture Code (FFMC) at current time step
    */
-  calcFFMC(Fo: number, H: number, T: number, W: number, ro: number) {
+  calcIntermediateFFMC(Fo: number, H: number, T: number, W: number, ro: number) {
     // mo = 147.2 * (101. - Fo) / (59.5 + Fo)
-    let mo = 147.2 * (101 - Fo) / (59.5 + Fo)
+    let mo = 147.2 * (101. - Fo) / (59.5 + Fo)
 
     //rf = where(ro .gt. .5, ro - .5, -1.)
-    let rf = ro > 0.5 ? ro - 0.5 : -1
+    let rf = ro - 0.5
 
-    // mo = where(rf .gt. 0., where(mo .gt. 150., mo + 42.5 * rf * exp(-100./(251.-mo)) * (1- exp(-6.93 / rf)) + .0015 * ((mo - 150.)^2) * sqrt(rf), mo + 42.5* rf * exp(-100./(251.-mo)) * (1 - exp(-6.93/rf))), mo)
-    if (mo > 150) {
-      mo = mo + 42.5 * rf * Math.exp(-100 / (251. - mo)) * (1. - Math.exp(-6.93 / rf)) + 0.0015 * (mo - 150) ** 2 * Math.sqrt(rf)
-    } else {
-      mo = mo + 42.5 * rf * Math.exp(-100 / (251. - mo)) * (1. - Math.exp(-6.93 / rf))
+    // mo = where(rf .gt. 0., 
+    //        where(mo .gt. 150., 
+    //          mo + 42.5 * rf * exp(-100./(251.-mo)) * (1 - exp(-6.93 / rf)) + .0015 * ((mo - 150.)^2) * sqrt(rf), 
+    //          mo + 42.5 * rf * exp(-100./(251.-mo)) * (1 - exp(-6.93 / rf))), mo)
+    if (ro > 0.5) {
+      if (mo > 150) {
+        mo = mo + 42.5 * rf * Math.exp(-100. / (251. - mo)) * (1. - Math.exp(-6.93 / rf)) + 0.0015 * (mo - 150.) ** 2 * Math.sqrt(rf)
+      } else {
+        mo = mo + 42.5 * rf * Math.exp(-100. / (251. - mo)) * (1. - Math.exp(-6.93 / rf))
+      }
     }
 
     // Ed = .942 * H^0.679 + 11 * exp((H - 100.)/10.) + 0.18 * (21.1 - T) * (1 - exp(-.115 * H))
-    let Ed = 0.942 * Math.pow(H, 0.679) + 11 * Math.exp((H - 100) / 10) + 0.18 * (21.1 - T) * (1 - Math.exp(-0.115 * H))
+    const Ed = 0.942 * H ** 0.679 + 11. * Math.exp((H - 100.) / 10.) + 0.18 * (21.1 - T) * (1. - Math.exp(-0.115 * H))
 
     // Ew = .618 * H^.753 + 10 * exp((H-100.)/10.) + 0.18 * (21.1 - T) * (1 - exp(-.115 * H))
-    let Ew = 0.618 * Math.pow(H, 0.753) + 10 * Math.exp((H - 100) / 10) + 0.18 * (21.1 - T) * (1 - Math.exp(-0.115 * H))
+    const Ew = 0.618 * H ** 0.753 + 10. * Math.exp((H - 100.) / 10.) + 0.18 * (21.1 - T) * (1. - Math.exp(-0.115 * H))
 
-    // ko1 = where(mo .gt. Ed, 0.424 * (1 - (H / 100)^1.7)+ 0.0694 * sqrt(W) * (1 - (H / 100)^8.), 0.424 * (1 - ((100 - H) / 100)^1.7) + 0.0694 * sqrt(W) * (1 - ((100 - H) / 100)^8))
-    let ko1 = 0.424 * (1 - Math.pow(H / 100, 1.7)) + 0.0694 * Math.sqrt(W) * (1 - Math.pow(H / 100, 8))
+    // ko1 = where(mo .gt. Ed, 
+    //  0.424 * (1 - (H / 100)^1.7)+ 0.0694 * sqrt(W) * (1 - (H / 100)^8.), 
+    //  0.424 * (1 - ((100 - H) / 100)^1.7) + 0.0694 * sqrt(W) * (1 - ((100 - H) / 100)^8))
+    let ko1: number
     if (mo > Ed) {
-      ko1 = 0.424 * (1 - Math.pow((100 - H) / 100, 1.7)) + 0.0694 * Math.sqrt(W) * (1 - Math.pow((100 - H) / 100, 8))
+      ko1 = 0.424 * (1. - (H / 100.) ** 1.7) + 0.0694 * Math.sqrt(W) * (1. - (H / 100.) ** 8)
+    } else {
+      ko1 = 0.424 * (1. - ((100. - H) / 100.) ** 1.7) + 0.0694 * Math.sqrt(W) * (1. - ((100. - H) / 100.) ** 8)
     }
 
     // kdw = ko1 * 0.581 * exp(0.0365 * T)
-    let kdw = ko1 * 0.581 * Math.exp(0.0365 * T)
+    const kdw = ko1 * 0.581 * Math.exp(0.0365 * T)
 
     // m = where(mo .gt. Ed, Ed + (mo - Ed) * 10^(-kdw), mo)
     // m = where(mo .lt. Ew, Ew - (Ew - mo) * 10^(-kdw), m)
     let m = mo
     if (mo > Ed) {
-      m = Ed + (mo - Ed) * Math.pow(10, -kdw)
+      m = Ed + (mo - Ed) * 10. ** -kdw
     } else if (mo < Ew) {
-      m = Ew - (Ew - mo) * Math.pow(10, -kdw)
+      m = Ew - (Ew - mo) * 10. ** -kdw
     }
 
     // m = m < 250.0
@@ -56,6 +67,14 @@ export class FwiService {
     return m;
   }
 
+  /**
+   * Calculate the Fine Fuel Moisture Code (FFMC)
+   * @param m Intermediate Fine Fuel Moisture Code (FFMC)
+   * @returns Fine Fuel Moisture Code (FFMC)
+   */
+  calcFFMC(m: number) {
+    return 59.5 * (250. - m) / (147.2 + m)
+  }
 
   /**
    * Calculate the Duff Moisture Code (DMC)
@@ -116,7 +135,7 @@ export class FwiService {
    * @param Lf Effective day length
    * @returns Drought Code (DC) at current time step
    */
-  calcDC(ro: number, T: number, Do: number, Lf: number) {
+  calcDC(Do: number, T: number, ro: number, Lf: number) {
     // T_dc = T > -2.8
 
     // rd = where(ro .gt. 2.8, 0.83 * ro - 1.27, -1)   ;adjust precip
@@ -156,7 +175,7 @@ export class FwiService {
     const fw = Math.exp(0.05039 * W)
 
     // ff = 91.9 * exp(-0.1386 * m) * (1 + (m^5.31 / (4.93 * 10^7)))
-    const ff = 91.9 * Math.exp(-0.1386 * m) * (1 + (Math.pow(m, 5.31) / (4.93 * Math.pow(10, 7))))
+    const ff = 91.9 * Math.exp(-0.1386 * m) * (1 + (m ** 5.31 / (4.93 * 10 ** 7)))
 
     // r = (0.208 * fw * ff) > 0.0
     return Math.max(0.208 * fw * ff, 0)
