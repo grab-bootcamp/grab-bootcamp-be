@@ -30,5 +30,6 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use 16.18.0
+            yarn prisma generate
             yarn run build
             pm2 startOrReload ecosystem.config.js --env production
