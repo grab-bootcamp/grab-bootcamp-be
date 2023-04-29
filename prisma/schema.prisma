@@ -6,3 +6,11 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Forest {
+  mId          Int    @id @default(autoincrement()) @map("m_id")
+  mName        String @unique @map("m_name")
+  mCoordinates Json   @map("m_coordinates")
+
+  @@map("forest")
+}
