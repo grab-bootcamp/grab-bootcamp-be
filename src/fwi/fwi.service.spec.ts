@@ -14,7 +14,6 @@ describe('FwiService', () => {
 
   // source: https://docs.niwa.co.nz/eco/fwsys/ref/EquationsandFORTRANfortheCFFWI.pdf
 
-  // skiped the first test case because of precision issues
   const testCases = [{
     month: 3,
     Fo: 87.7,
