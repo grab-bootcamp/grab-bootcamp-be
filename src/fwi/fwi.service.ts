@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class FwiService {
+  private effectiveDayLength = [6.5, 7.5, 9, 12.8, 13.9, 13.9, 12.4, 10.9, 9.4, 8.0, 7.0, 6]
+  private dayLengthFactor = [-1.6, -1.6, -1.6, 0.9, 3.8, 5.8, 6.4, 5, 2.4, 0.4, -1.6, -1.6]
+
   /**
    * Calculate the Intermediate Fine Fuel Moisture Code (FFMC)
    * 
@@ -82,10 +85,10 @@ export class FwiService {
    * @param T Temperature 
    * @param ro Rainfall 
    * @param H 24h fuel moisture content 
-   * @param Le Effective day length 
+   * @param month Month of the year (0 - 11)
    * @returns Duff Moisture Code (DMC) at current time step
    */
-  calcDMC(Po: number, T: number, ro: number, H: number, Le: number) {
+  calcDMC(Po: number, T: number, ro: number, H: number, month: number) {
     // T_dmc = T > -1.1
 
     // re = where(ro .gt. 1.5, .92 * ro - 1.27, 0)    ;adjust precip
@@ -119,7 +122,7 @@ export class FwiService {
     Po = Math.max(Po, 0)
 
     // K = 1.894 * (T_dmc + 1.1) * (100 - H) * Le * 10^(-6)
-    let K = 1.894 * (T + 1.1) * (100 - H) * Le * Math.pow(10, -6)
+    let K = 1.894 * (T + 1.1) * (100 - H) * this.effectiveDayLength[month] * Math.pow(10, -6)
 
     // P = (Po + 100 * K) > 0.0
     let P = Math.max(Po + 100 * K, 0)
@@ -132,10 +135,10 @@ export class FwiService {
    * @param ro Rainfall
    * @param T Temperature
    * @param Do Drought Code (DC) at previous time step
-   * @param Lf Effective day length
+   * @param month Month of the year (0 - 11)
    * @returns Drought Code (DC) at current time step
    */
-  calcDC(Do: number, T: number, ro: number, Lf: number) {
+  calcDC(Do: number, T: number, ro: number, month: number) {
     // T_dc = T > -2.8
 
     // rd = where(ro .gt. 2.8, 0.83 * ro - 1.27, -1)   ;adjust precip
@@ -153,7 +156,7 @@ export class FwiService {
     Dr = Math.max(Dr, 0)
 
     // V = (.36 * (T_dc + 2.8)) + Lf
-    let V = (.36 * (T + 2.8)) + Lf
+    let V = (.36 * (T + 2.8)) + this.dayLengthFactor[month]
 
     // V = V > 0
     V = Math.max(V, 0)
