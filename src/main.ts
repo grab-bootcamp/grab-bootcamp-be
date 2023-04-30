@@ -6,16 +6,15 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const env = configService.get('NODE_ENV');
-
-  if (env === 'temporary_disable_helmet') {
-    app.use(helmet());
-  }
-
+  
+  app.enableCors();
+  app.use(helmet());
+  
   const port = configService.get('PORT');
-
+  
   await app.listen(port);
-
+  
+  const env = configService.get('NODE_ENV');
   // Send ready signal to PM2
   if (env === 'production') {
     process.send('ready');
