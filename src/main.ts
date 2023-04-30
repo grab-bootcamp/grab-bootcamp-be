@@ -8,7 +8,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const env = configService.get('NODE_ENV');
 
-  if (env === 'production') {
+  if (env === 'temporary_disable_helmet') {
     app.use(helmet());
   }
 
