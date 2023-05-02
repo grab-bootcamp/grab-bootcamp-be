@@ -10,6 +10,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ForestModule } from './forest/forest.module';
 import GraphQLJSON from 'graphql-type-json';
+import { ScheduleModule } from '@nestjs/schedule';
+import { LivedataModule } from './livedata/livedata/livedata.module';
 
 @Module({
   imports: [
@@ -21,8 +23,16 @@ import GraphQLJSON from 'graphql-type-json';
           .default('development'),
         PORT: Joi.number().default(3000),
         DATABASE_URL: Joi.string().required(),
+        // MONGO_URI: Joi.string().required(),
       }),
     }),
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     uri: configService.get('MONGO_URI')
+    //   }),
+    // }),
     CacheModule.register({
       ttl: 60000, // 1 minute
       isGlobal: true,
@@ -38,6 +48,8 @@ import GraphQLJSON from 'graphql-type-json';
     FwiModule,
     PrismaModule,
     ForestModule,
+    LivedataModule,
+    ScheduleModule.forRoot()
   ],
 })
 export class AppModule { }
