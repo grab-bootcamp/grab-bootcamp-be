@@ -13,11 +13,5 @@ async function bootstrap() {
   const port = configService.get('PORT');
   
   await app.listen(port);
-  
-  const env = configService.get('NODE_ENV');
-  // Send ready signal to PM2
-  if (env === 'production') {
-    process.send('ready');
-  }
 }
 bootstrap();
