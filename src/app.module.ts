@@ -9,7 +9,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ForestModule } from './forest/forest.module';
+import { NotificationModule } from './notification/notification.module';
 import GraphQLJSON from 'graphql-type-json';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -34,10 +36,12 @@ import GraphQLJSON from 'graphql-type-json';
         JSON: GraphQLJSON
       },
     }),
+    EventEmitterModule.forRoot(),
     SseModule,
     FwiModule,
     PrismaModule,
     ForestModule,
+    NotificationModule,
   ],
 })
 export class AppModule { }
