@@ -12,6 +12,7 @@ import { ForestModule } from './forest/forest.module';
 import GraphQLJSON from 'graphql-type-json';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LivedataModule } from './livedata/livedata/livedata.module';
+import { DbModule } from './livedata/db/db.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { LivedataModule } from './livedata/livedata/livedata.module';
     PrismaModule,
     ForestModule,
     LivedataModule,
+    DbModule,
     ScheduleModule.forRoot()
   ],
 })
