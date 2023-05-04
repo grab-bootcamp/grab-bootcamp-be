@@ -22,6 +22,7 @@
   "dependencies": {
     "@apollo/server": "^4.7.0",
     "@nestjs/apollo": "^11.0.5",
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
@@ -32,6 +33,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.13.0",
     "@nestjs/schedule": "^2.2.1",
+    "axios": "^1.4.0",
     "cache-manager": "^5.2.0",
     "graphql": "^16.6.0",
     "graphql-type-json": "^0.3.2",
