@@ -12,7 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   
   app.enableCors();
-  // app.use(helmet());
+  app.use(helmet());
   
   const port = configService.get('PORT');
   
