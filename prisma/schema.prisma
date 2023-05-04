@@ -14,3 +14,18 @@ model Forest {
 
   @@map("forest")
 }
+
+model Notification {
+  mId        Int      @id @default(autoincrement()) @map("m_id")
+  mTitle     String   @map("m_title")
+  mBody      String   @map("m_body")
+  mImage     String?  @map("m_image")
+  mType      String   @map("m_type")
+  mSeverity  String   @map("m_severity")
+  mForestId  Int?     @map("m_forest_id")
+  mCreatedAt DateTime @default(now()) @map("m_created_at")
+
+  @@index([mForestId])
+  @@index([mCreatedAt])
+  @@map("notification")
+}

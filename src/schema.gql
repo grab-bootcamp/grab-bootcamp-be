@@ -13,6 +13,23 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type Notification {
+  mId: ID!
+  mTitle: String!
+  mBody: String!
+  mImage: String
+  mType: String!
+  mSeverity: String!
+  mForestId: Float
+  mCreatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   forest: [Forest!]!
+  notification(cursor: Float = null, size: Float! = 10): [Notification!]!
 }
