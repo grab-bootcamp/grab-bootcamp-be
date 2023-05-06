@@ -6,6 +6,7 @@ type Forest {
   mId: ID!
   mName: String!
   mCoordinates: JSON!
+  mLastFFMC: JSON!
 }
 
 """

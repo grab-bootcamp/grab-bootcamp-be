@@ -14,5 +14,7 @@ export class Forest implements PrismaForest {
   @Field(() => GraphQLJSON)
   mCoordinates: Prisma.JsonValue;
 
+  @Field(() => GraphQLJSON)
+  mLastFFMC: Prisma.JsonValue;
   
 }

@@ -11,6 +11,7 @@ model Forest {
   mId          Int    @id @default(autoincrement()) @map("m_id")
   mName        String @unique @map("m_name")
   mCoordinates Json   @map("m_coordinates")
+  mLastFFMC    Json   @default(dbgenerated()) @map("m_lastFFMC")
 
   @@map("forest")
 }
@@ -24,6 +25,17 @@ model notification {
   m_severity   String
   m_forest_id  Int?
   m_created_at DateTime @default(now())
+
+  @@index([m_created_at])
+  @@index([m_forest_id])
+}
+
+model livedata {
+
+  m_id         Int      @id @default(autoincrement())
+  m_forest_id  Int?
+  m_created_at DateTime @default(now())
+  m_data       Json     
 
   @@index([m_created_at])
   @@index([m_forest_id])

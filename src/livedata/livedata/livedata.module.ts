@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
 import { CronjobsService } from '../cronjobs/cronjobs.service';
 import { HttpModule } from '@nestjs/axios';
-import { PrismaService } from 'src/prisma/prisma.service'; 
-import { DbService } from '../db/db.service';
-import { PrismaModule } from 'src/prisma/prisma.module';
-import { DbModule } from '../db/db.module';
+import { LivedataController } from './livedata.controller';
 
 @Module({
-    imports: [ HttpModule,DbModule],
-    controllers: [],
-    providers: [CronjobsService, DbService],
+    imports: [ HttpModule],
+    controllers: [LivedataController],
+    providers: [CronjobsService],
     exports: [CronjobsService],
     })
 export class LivedataModule {
    
+    
 }

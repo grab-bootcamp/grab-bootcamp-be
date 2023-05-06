@@ -1,30 +1,33 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
-import { catchError, map } from 'rxjs/operators';
-import { DbService } from '../db/db.service';
-
+import { catchError, map, take } from 'rxjs/operators';
+import { Forest} from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { env } from 'process';
 
 @Injectable()
 export class CronjobsService {
-  constructor(private readonly httpService: HttpService, private dbservice: DbService) {}
+  constructor(private readonly httpService: HttpService, private prismaService: PrismaService) {}
   
   private readonly logger = new Logger(CronjobsService.name);
   private readonly forests = new Array;
-  // private readonly API_keys=['30f7f09560144876a51105253230305'];
+  public data;
 
   // fetch Forests cooordinates from MySQL database
   async onModuleInit() {
-    const value = await this.dbservice.getAllForest(); 
+   // const value = await this.dbservice.getAllForest(); 
+   const value = await this.prismaService.forest.findMany();
     for(let i=0; i< value.length; i++)
     {
-      this.forests[i]=value[i].mCoordinates;
-      
+      this.forests[i]=value[i].mCoordinates;  
     }
   }
 
   // fetch data weather API
-  fetchLiveData(keys,lat,lng){
+  fetchAPI(lat,lng){
+    const keys= process.env.API_KEYS;
     const url=`http://api.weatherapi.com/v1/current.json?key= ${keys} &q= ${lng}, ${lat}`;
     const response = this.httpService
     .get(url)
@@ -33,21 +36,31 @@ export class CronjobsService {
       catchError((e) => {
         throw new HttpException(e.response.data, e.response.status);
       }),
-     ); 
+     );
    return response;
   }
 
- 
-  @Cron(CronExpression.EVERY_MINUTE)
-   // push to MySQL database
-  pushToDatabase(){
+  pushToDb(data: object)
+  {
+    
+    
+  }
+
+  async fetchWholeData() : Promise<object> 
+  {
+     
     for (let i=0; i< this.forests.length;i++)
     {
-       this.fetchLiveData('30f7f09560144876a51105253230305',this.forests[i].lng,this.forests[i].lat).subscribe(val =>{
-       console.log(val);
-      })
+    
+      this.fetchAPI(this.forests[i].lng,this.forests[i].lat).subscribe(val => {
+      this.data=val;
+      this.pushToDb(this.data);
+      });
+        
+     
     }
-  
+     return this.data;
+    
   }
    
   @Timeout(50000)
