@@ -16,18 +16,19 @@ model Forest {
   @@map("forest")
 }
 
-model notification {
-  m_id         Int      @id @default(autoincrement())
-  m_title      String
-  m_body       String
-  m_image      String?
-  m_type       String
-  m_severity   String
-  m_forest_id  Int?
-  m_created_at DateTime @default(now())
+model Notification {
+  mId        Int      @id @default(autoincrement()) @map("m_id")
+  mTitle     String   @map("m_title")
+  mBody      String   @map("m_body")
+  mImage     String?  @map("m_image")
+  mType      String   @map("m_type")
+  mSeverity  String   @map("m_severity")
+  mForestId  Int?     @map("m_forest_id")
+  mCreatedAt DateTime @default(now()) @map("m_created_at")
 
-  @@index([m_created_at])
-  @@index([m_forest_id])
+  @@index([mForestId])
+  @@index([mCreatedAt])
+  @@map("notification")
 }
 
 model livedata {
