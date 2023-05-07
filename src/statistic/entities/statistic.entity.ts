@@ -1,5 +1,6 @@
 import { Field, Float, GraphQLISODateTime, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Prisma, Statistic as PrismaStatistic } from "@prisma/client";
+import GraphQLJSON from "graphql-type-json";
 
 export const INTERVAL_HOUR_SCRAPING = 6;
 
@@ -22,7 +23,7 @@ export class Statistic implements PrismaStatistic {
   
   @Field(() => Float)
   mISI: number;
-
+  
   @Field(() => Float)
   mHumidity: number;
   
@@ -37,6 +38,9 @@ export class Statistic implements PrismaStatistic {
   
   @Field(() => Int)
   mForestId: number;
+
+  @Field(() => GraphQLJSON)
+  mCondition: Prisma.JsonValue;
   
   mRawData: Prisma.JsonValue;
   pCreatedAt: string;

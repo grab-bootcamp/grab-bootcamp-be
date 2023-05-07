@@ -25,6 +25,7 @@ export class StatisticController implements OnModuleInit {
 
   async onModuleInit() {
     await this._processForestData();
+    console.log(this.forests);
   }
 
   @Cron(`0 0 0-23/${INTERVAL_HOUR_SCRAPING} * * *`)
@@ -32,7 +33,7 @@ export class StatisticController implements OnModuleInit {
     const timeMark = this.statisticService._getLatestPastTimeMark();
     const fwiWeatherData = await Promise.all(this.forests.map(async (forest) => {
       const { lat, lng } = forest.mCoordinates as any;
-      const { humidity, temperature, windSpeed, rainFall, rawData } = await this.statisticService.getRealtimeWeatherData(lat, lng);
+      const { humidity, temperature, windSpeed, rainFall, condition, rawData } = await this.statisticService.getRealtimeWeatherData(lat, lng);
       const intermediateFFMC = this.fwiService.calcIntermediateFFMC(
         forest.Po,
         humidity,
@@ -73,6 +74,7 @@ export class StatisticController implements OnModuleInit {
         mWindSpeed: windSpeed,
         mTemperature: temperature,
         mRainfall: rainFall,
+        mCondition: condition,
         mRawData: rawData,
         mCreatedAt: timeMark,
         mForestId: forest.mId,

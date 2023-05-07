@@ -45,6 +45,8 @@ model Statistic {
   mWindSpeed   Float @map("m_wind_speed")
   mRainfall    Float @map("m_rain_fall")
 
+  mCondition Json @map("m_condition")
+
   mRawData Json @map("m_raw_data")
 
   @@index([mForestId, mCreatedAt(sort: Desc)])

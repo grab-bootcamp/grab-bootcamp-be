@@ -41,6 +41,7 @@ type Statistic {
   mWindSpeed: Float!
   mRainfall: Float!
   mForestId: Int!
+  mCondition: JSON!
 }
 
 type Query {
