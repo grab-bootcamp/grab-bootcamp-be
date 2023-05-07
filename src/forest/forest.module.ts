@@ -3,6 +3,7 @@ import { ForestService } from './forest.service';
 import { ForestResolver } from './forest.resolver';
 
 @Module({
-  providers: [ForestResolver, ForestService]
+  providers: [ForestResolver, ForestService],
+  exports: [ForestService]
 })
 export class ForestModule {}

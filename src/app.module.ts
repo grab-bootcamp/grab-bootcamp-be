@@ -12,6 +12,9 @@ import { ForestModule } from './forest/forest.module';
 import { NotificationModule } from './notification/notification.module';
 import GraphQLJSON from 'graphql-type-json';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
+import { StatisticModule } from './statistic/statistic.module';
+
 
 @Module({
   imports: [
@@ -42,6 +45,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     PrismaModule,
     ForestModule,
     NotificationModule,
+    ScheduleModule.forRoot(),
+    StatisticModule
   ],
 })
 export class AppModule { }
