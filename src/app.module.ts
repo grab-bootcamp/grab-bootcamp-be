@@ -13,7 +13,7 @@ import { NotificationModule } from './notification/notification.module';
 import GraphQLJSON from 'graphql-type-json';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
-import { LivedataModule } from './livedata/livedata/livedata.module';
+import { StatisticModule } from './statistic/statistic.module';
 
 
 @Module({
@@ -26,16 +26,8 @@ import { LivedataModule } from './livedata/livedata/livedata.module';
           .default('development'),
         PORT: Joi.number().default(3000),
         DATABASE_URL: Joi.string().required(),
-        // MONGO_URI: Joi.string().required(),
       }),
     }),
-    // MongooseModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     uri: configService.get('MONGO_URI')
-    //   }),
-    // }),
     CacheModule.register({
       ttl: 60000, // 1 minute
       isGlobal: true,
@@ -53,8 +45,8 @@ import { LivedataModule } from './livedata/livedata/livedata.module';
     PrismaModule,
     ForestModule,
     NotificationModule,
-    LivedataModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    StatisticModule
   ],
 })
 export class AppModule { }

@@ -6,7 +6,6 @@ type Forest {
   mId: ID!
   mName: String!
   mCoordinates: JSON!
-  mLastFFMC: JSON!
 }
 
 """
@@ -30,7 +29,22 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Statistic {
+  mId: ID!
+  mCreatedAt: DateTime!
+  mFFMC: Float!
+  mDMC: Float!
+  mDC: Float!
+  mISI: Float!
+  mHumidity: Float!
+  mTemperature: Float!
+  mWindSpeed: Float!
+  mRainfall: Float!
+  mForestId: Int!
+}
+
 type Query {
   forest: [Forest!]!
   notification(cursor: Float = null, size: Float! = 10): [Notification!]!
+  statistic(forestId: Float!, fromDate: DateTime!, toDate: DateTime!): [Statistic!]!
 }

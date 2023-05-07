@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Forest {
   mId          Int    @id @default(autoincrement()) @map("m_id")
   mName        String @unique @map("m_name")
   mCoordinates Json   @map("m_coordinates")
-  mLastFFMC    Json   @default(dbgenerated()) @map("m_lastFFMC")
 
   @@map("forest")
 }
@@ -27,17 +27,27 @@ model Notification {
   mCreatedAt DateTime @default(now()) @map("m_created_at")
 
   @@index([mForestId])
-  @@index([mCreatedAt])
+  @@index([mCreatedAt(sort: Desc)])
   @@map("notification")
 }
 
-model livedata {
+model Statistic {
+  mId        Int      @id @default(autoincrement()) @map("m_id")
+  mForestId  Int      @map("m_forest_id")
+  mCreatedAt DateTime @map("m_created_at")
 
-  m_id         Int      @id @default(autoincrement())
-  m_forest_id  Int?
-  m_created_at DateTime @default(now())
-  m_data       Json     
+  mFFMC        Float @map("m_FFMC")
+  mDMC         Float @map("m_DMC")
+  mDC          Float @map("m_DC")
+  mISI         Float @map("m_ISI")
+  mHumidity    Float @map("m_humidity")
+  mTemperature Float @map("m_temperature")
+  mWindSpeed   Float @map("m_wind_speed")
+  mRainfall    Float @map("m_rain_fall")
 
-  @@index([m_created_at])
-  @@index([m_forest_id])
+  mRawData Json @map("m_raw_data")
+
+  @@index([mForestId, mCreatedAt(sort: Desc)])
+  @@index([mCreatedAt(sort: Desc)])
+  @@map("statistic")
 }
