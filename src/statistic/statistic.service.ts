@@ -26,7 +26,14 @@ export class StatisticService {
     private readonly httpService: HttpService,
   ) { }
 
-  getStatistic(mForestId: number, fromDate: Date, toDate: Date) {
+  getStatistic(mForestId: number, fromDate: Date, toDate: Date, cursor: number, size: number) {
+    const onCursorArgs = {}
+    if (cursor) {
+      onCursorArgs['cursor'] = {
+        mId: cursor
+      }
+      onCursorArgs['skip'] = 1
+    }
     return this.prisma.statistic.findMany({
       where: {
         mForestId,
@@ -35,6 +42,8 @@ export class StatisticService {
           lte: toDate,
         },
       },
+      ...onCursorArgs,
+      take: size,
       orderBy: {
         mCreatedAt: 'desc',
       },
