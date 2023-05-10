@@ -34,7 +34,6 @@ export class StatisticService {
       }
       onCursorArgs['skip'] = 1
     }
-
     return this.prisma.statistic.findMany({
       where: {
         mForestId,
@@ -52,7 +51,7 @@ export class StatisticService {
   }
 
   async getRealtimeWeatherData(lat: number, lng: number): Promise<IRealtimeWeatherData> {
-    const apiKey = this.configService.getOrThrow('OPEN_WEATHER_API_KEY');
+    const apiKey = this.configService.getOrThrow('WEATHER_API_KEY');
     const requestUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lng}`;
     const { data } = await this.httpService.axiosRef.get(requestUrl);
     return {

@@ -25,7 +25,6 @@ export class StatisticController implements OnModuleInit {
 
   async onModuleInit() {
     await this._processForestData();
-    console.log(this.forests);
   }
 
   @Cron(`0 0 0-23/${INTERVAL_HOUR_SCRAPING} * * *`)
