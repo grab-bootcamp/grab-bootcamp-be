@@ -13,6 +13,7 @@ import { HttpModule } from '@nestjs/axios';
     ForestModule,
   ],
   providers: [StatisticResolver, StatisticService],
-  controllers: [StatisticController]
+  controllers: [StatisticController],
+  exports: [StatisticService],
 })
 export class StatisticModule { }

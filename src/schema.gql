@@ -47,5 +47,5 @@ type Statistic {
 type Query {
   forest: [Forest!]!
   notification(cursor: Float = null, size: Float! = 10): [Notification!]!
-  statistic(forestId: Float!, fromDate: DateTime!, toDate: DateTime!): [Statistic!]!
+  statistic(forestId: Float!, fromDate: DateTime!, toDate: DateTime!, cursor: Float = null, size: Float! = 10): [Statistic!]!
 }

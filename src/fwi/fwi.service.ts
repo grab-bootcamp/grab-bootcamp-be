@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { FwiForsestData } from 'src/statistic/entities';
 
 @Injectable()
 export class FwiService {
-  
+
   private effectiveDayLength = [6.5, 7.5, 9, 12.8, 13.9, 13.9, 12.4, 10.9, 9.4, 8.0, 7.0, 6]
   private dayLengthFactor = [-1.6, -1.6, -1.6, 0.9, 3.8, 5.8, 6.4, 5, 2.4, 0.4, -1.6, -1.6]
 
@@ -181,5 +182,42 @@ export class FwiService {
 
     // r = (0.208 * fw * ff) > 0.0
     return Math.max(0.208 * fw * ff, 0)
+  }
+
+  _mainCalculation(
+    humidity: number, temperature: number, windSpeed: number, rainFall: number,
+    lastRecord: FwiForsestData,
+    currentMonth: number
+  ) {
+    const intermediateFFMC = this.calcIntermediateFFMC(
+      lastRecord.Po,
+      humidity,
+      temperature,
+      windSpeed,
+      rainFall,
+    )
+
+    const mFFMC = this.calcFFMC(intermediateFFMC);
+    const mDMC = this.calcDMC(
+      lastRecord.Po,
+      temperature,
+      rainFall,
+      humidity,
+      currentMonth
+    );
+    const mDC = this.calcDC(
+      lastRecord.Do,
+      temperature,
+      rainFall,
+      currentMonth
+    );
+    const mISI = this.calcISI(windSpeed, intermediateFFMC);
+
+    return {
+      mFFMC,
+      mDMC,
+      mDC,
+      mISI,
+    }
   }
 }
