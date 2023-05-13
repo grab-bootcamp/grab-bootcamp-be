@@ -105,11 +105,11 @@ export class CrawlerService {
         rainFall: total.precip_total * INCH_TO_MM,
         rawData: data,
         condition: {
-          text: data[Math.round(data.length / 2)].wx_phrase,
-          icon: ICON_MAP[data[Math.round(data.length / 2)].wx_icon] ?? data[Math.round(data.length / 2)].wx_icon,
+          text: data[Math.floor(data.length / 2)]?.wx_phrase ?? null,
+          icon: ICON_MAP[data[Math.floor(data.length / 2)].wx_icon] ?? data[Math.floor(data.length / 2)].wx_icon ?? null,
           code: null,
         },
-        mCreatedAt: new Date(data[Math.round(data.length / 2)].valid_time_gmt * 1000),
+        mCreatedAt: new Date(data[Math.floor(data.length / 2)].valid_time_gmt * 1000),
       }
     })
   }
