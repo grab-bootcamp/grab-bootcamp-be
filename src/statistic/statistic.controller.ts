@@ -4,14 +4,8 @@ import { Cron } from '@nestjs/schedule';
 import { ForestService } from 'src/forest/forest.service';
 import { FwiService } from 'src/fwi/fwi.service';
 import { Forest } from '@prisma/client';
-import { INTERVAL_HOUR_SCRAPING } from './entities';
+import { FwiForsestData, INTERVAL_HOUR_SCRAPING } from './entities';
 import { DEFAULT_FWI_CONSTANTS } from 'src/fwi/fwi.default';
-
-type FwiForsestData = {
-  Fo: number;
-  Do: number;
-  Po: number;
-}
 
 @Controller('statistic')
 export class StatisticController implements OnModuleInit {
@@ -33,30 +27,16 @@ export class StatisticController implements OnModuleInit {
     const fwiWeatherData = await Promise.all(this.forests.map(async (forest) => {
       const { lat, lng } = forest.mCoordinates as any;
       const { humidity, temperature, windSpeed, rainFall, condition, rawData } = await this.statisticService.getRealtimeWeatherData(lat, lng);
-      const intermediateFFMC = this.fwiService.calcIntermediateFFMC(
-        forest.Po,
+      const currentMonth = new Date().getMonth();
+
+      const { mFFMC, mDMC, mDC, mISI } = this.fwiService._mainCalculation(
         humidity,
         temperature,
         windSpeed,
         rainFall,
-      )
-      const currentMonth = new Date().getMonth();
-
-      const mFFMC = this.fwiService.calcFFMC(intermediateFFMC);
-      const mDMC = this.fwiService.calcDMC(
-        forest.Po,
-        temperature,
-        rainFall,
-        humidity,
+        forest,
         currentMonth
       );
-      const mDC = this.fwiService.calcDC(
-        forest.Do,
-        temperature,
-        rainFall,
-        currentMonth
-      );
-      const mISI = this.fwiService.calcISI(windSpeed, intermediateFFMC);
 
       // Cache the data for later time mark calculation
       // Manipulate pointer to the forest object ;)

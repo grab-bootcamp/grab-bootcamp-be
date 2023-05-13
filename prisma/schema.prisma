@@ -53,3 +53,16 @@ model Statistic {
   @@index([mCreatedAt(sort: Desc)])
   @@map("statistic")
 }
+
+model Crawler {
+  mId         Int       @id @default(autoincrement()) @map("m_id")
+  mForestId   Int       @map("m_forest_id")
+  mUrl        String    @map("m_url") @unique
+  mStatus     String    @map("m_status")
+  mCreatedAt  DateTime  @default(now()) @map("m_created_at")
+  mModifiedAt DateTime? @updatedAt @map("m_modified_at")
+
+  @@index([mStatus, mCreatedAt(sort: Desc)])
+  @@index([mCreatedAt(sort: Desc)])
+  @@map("crawler")
+}

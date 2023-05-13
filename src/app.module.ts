@@ -14,6 +14,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { StatisticModule } from './statistic/statistic.module';
+import { CrawlerModule } from './crawler/crawler.module';
 
 
 @Module({
@@ -46,7 +47,8 @@ import { StatisticModule } from './statistic/statistic.module';
     ForestModule,
     NotificationModule,
     ScheduleModule.forRoot(),
-    StatisticModule
+    StatisticModule,
+    CrawlerModule
   ],
 })
 export class AppModule { }

@@ -1035,7 +1035,7 @@
 
 "@nestjs/schedule@^2.2.1":
   version "2.2.1"
-  resolved "https://registry.npmjs.org/@nestjs/schedule/-/schedule-2.2.1.tgz"
+  resolved "https://registry.yarnpkg.com/@nestjs/schedule/-/schedule-2.2.1.tgz#404e79133e50e4b70dec3b7c194d6b796485cb13"
   integrity sha512-7jev9Q3aFnRajKAi/At+9rzwflZNN10SA5PcdCvxc35GFfTdM2a6O5GA7tiIbLuOOzdjPYPbC3RxP4tpXOHVWw==
   dependencies:
     cron "2.3.0"
