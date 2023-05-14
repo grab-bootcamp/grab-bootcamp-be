@@ -5,10 +5,10 @@ import { nanoid } from 'nanoid';
 
 @Injectable()
 export class SseService {
-  private events = new Subject<MessageEvent>();
+  private event = new Subject<MessageEvent>();
 
   addEvent(messageEvent: MessageEvent) {
-    this.events.next({
+    this.event.next({
       ...messageEvent,
       id: nanoid(),
       retry: 3000,
@@ -16,6 +16,6 @@ export class SseService {
   }
 
   sendEvents() {
-    return this.events;
+    return this.event;
   }
 }

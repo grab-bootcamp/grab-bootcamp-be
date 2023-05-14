@@ -1,4 +1,4 @@
-import { Controller, Sse } from '@nestjs/common';
+import { Body, Controller, Post, Sse } from '@nestjs/common';
 import { SseService } from './sse.service';
 import { Observable } from 'rxjs';
 import { MessageEvent } from './sse.definition';
@@ -21,5 +21,10 @@ export class SseController {
       data: payload,
       type: config.event,
     });
+  }
+
+  @Post()
+  publishMessage(@Body() payload: any) {
+    this.sseService.addEvent(payload);
   }
 }

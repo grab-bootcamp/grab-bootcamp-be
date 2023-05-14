@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { FwiForsestData } from 'src/statistic/entities';
 
 @Injectable()
 export class FwiService {
+
   private effectiveDayLength = [6.5, 7.5, 9, 12.8, 13.9, 13.9, 12.4, 10.9, 9.4, 8.0, 7.0, 6]
   private dayLengthFactor = [-1.6, -1.6, -1.6, 0.9, 3.8, 5.8, 6.4, 5, 2.4, 0.4, -1.6, -1.6]
 
@@ -92,10 +94,10 @@ export class FwiService {
     // T_dmc = T > -1.1
 
     // re = where(ro .gt. 1.5, .92 * ro - 1.27, 0)    ;adjust precip
-    let re = ro > 1.5 ? 0.92 * ro - 1.27 : 0
+    const re = ro > 1.5 ? 0.92 * ro - 1.27 : 0
 
     // Mo = 20. + exp(5.6348 - (Po / 43.43))
-    let Mo = 20 + Math.exp(5.6348 - (Po / 43.43))
+    const Mo = 20 + Math.exp(5.6348 - (Po / 43.43))
 
     // b = 14. - 1.3 * log(Po)
     let b = 14 - 1.3 * Math.log(Po)
@@ -111,7 +113,7 @@ export class FwiService {
     }
 
     // Mr = where(re .gt. 0, Mo + (1000. * re / (48.77 + b * re)), 0) ;only if there's precip
-    let Mr = re > 0 ? Mo + (1000 * re / (48.77 + b * re)) : 0
+    const Mr = re > 0 ? Mo + (1000 * re / (48.77 + b * re)) : 0
 
     // Po = where(re .gt. 0, 244.72 - 43.43 * log(Mr - 20.), Po)       ;only if there's precip
     if (re > 0) {
@@ -122,10 +124,10 @@ export class FwiService {
     Po = Math.max(Po, 0)
 
     // K = 1.894 * (T_dmc + 1.1) * (100 - H) * Le * 10^(-6)
-    let K = 1.894 * (T + 1.1) * (100 - H) * this.effectiveDayLength[month] * Math.pow(10, -6)
+    const K = 1.894 * (T + 1.1) * (100 - H) * this.effectiveDayLength[month] * Math.pow(10, -6)
 
     // P = (Po + 100 * K) > 0.0
-    let P = Math.max(Po + 100 * K, 0)
+    const P = Math.max(Po + 100 * K, 0)
 
     return P
   }
@@ -142,12 +144,12 @@ export class FwiService {
     // T_dc = T > -2.8
 
     // rd = where(ro .gt. 2.8, 0.83 * ro - 1.27, -1)   ;adjust precip
-    let rd = ro > 2.8 ? 0.83 * ro - 1.27 : -1
+    const rd = ro > 2.8 ? 0.83 * ro - 1.27 : -1
     // Qo = 800 * exp(-Do / 400.)
-    let Qo = 800 * Math.exp(-Do / 400)
+    const Qo = 800 * Math.exp(-Do / 400)
 
     // Qr = Qo + (3.937 * rd)
-    let Qr = Qo + (3.937 * rd)
+    const Qr = Qo + (3.937 * rd)
 
     // Dr = where(rd .gt. 0., 400. * log(800. / Qr), Do)       ;only if precip
     let Dr = rd > 0 ? 400 * Math.log(800 / Qr) : Do
@@ -162,9 +164,7 @@ export class FwiService {
     V = Math.max(V, 0)
 
     // Drou = (Dr + .5 * V) > 0.0
-    let Drou = Math.max(Dr + 0.5 * V, 0)
-
-    return Drou
+    return Math.max(Dr + 0.5 * V, 0)
   }
 
   /**
@@ -182,5 +182,42 @@ export class FwiService {
 
     // r = (0.208 * fw * ff) > 0.0
     return Math.max(0.208 * fw * ff, 0)
+  }
+
+  _mainCalculation(
+    humidity: number, temperature: number, windSpeed: number, rainFall: number,
+    lastRecord: FwiForsestData,
+    currentMonth: number
+  ) {
+    const intermediateFFMC = this.calcIntermediateFFMC(
+      lastRecord.Po,
+      humidity,
+      temperature,
+      windSpeed,
+      rainFall,
+    )
+
+    const mFFMC = this.calcFFMC(intermediateFFMC);
+    const mDMC = this.calcDMC(
+      lastRecord.Po,
+      temperature,
+      rainFall,
+      humidity,
+      currentMonth
+    );
+    const mDC = this.calcDC(
+      lastRecord.Do,
+      temperature,
+      rainFall,
+      currentMonth
+    );
+    const mISI = this.calcISI(windSpeed, intermediateFFMC);
+
+    return {
+      mFFMC,
+      mDMC,
+      mDC,
+      mISI,
+    }
   }
 }
