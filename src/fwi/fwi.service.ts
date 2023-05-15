@@ -76,6 +76,7 @@ export class FwiService {
    * Calculate the Fine Fuel Moisture Code (FFMC)
    * @param m Intermediate Fine Fuel Moisture Code (FFMC)
    * @returns Fine Fuel Moisture Code (FFMC)
+   * @see calcIntermediateFFMC
    */
   calcFFMC(m: number) {
     return 59.5 * (250. - m) / (147.2 + m)
@@ -172,6 +173,7 @@ export class FwiService {
    * @param W Wind speed
    * @param m Intermediate parameter from calcFFMC
    * @returns Initial Spread Index (ISI) at current time step
+   * @see calcIntermediateFFMC
    */
   calcISI(W: number, m: number) {
     // fw = exp(.05039 * W)
@@ -182,6 +184,46 @@ export class FwiService {
 
     // r = (0.208 * fw * ff) > 0.0
     return Math.max(0.208 * fw * ff, 0)
+  }
+
+  /**
+   * Calculate the Buildup Index (BUI)
+   * @param DMC Duff Moisture Code (DMC)
+   * @param DC Drought Code (DC)
+   * @returns Buildup Index (BUI) at current time step
+   * @see calcDMC
+   * @see calcDC
+   */
+  calcBUI(DMC: number, DC: number) {
+    if (DMC <= 0.4 * DC) {
+      return 0.8 * DMC * DC / (DMC + 0.4 * DC)
+    } else {
+      return DMC - (1. - 0.8 * DC / (DMC + 0.4 * DC)) * (0.92 + (0.0114 * DMC) ** 1.7)
+    }
+  }
+
+  /**
+   * Calculate the Fire Weather Index (FWI)
+   * @param ISI Initial Spread Index (ISI)
+   * @param BUI Buildup Index (BUI)
+   * @returns Fire Weather Index (FWI) at current time step
+   * @see calcISI
+   * @see calcBUI
+   */
+  calcFWI(ISI: number, BUI: number) {
+    let fD;
+    if (BUI <= 80) {
+      fD = 0.626 * BUI ** 0.809 + 2
+    } else {
+      fD = 1000 / (25 + 108.64 * Math.exp(-0.023 * BUI))
+    }
+
+    const B = 0.1 * ISI * fD
+    if (B <= 1) {
+      return B
+    } else {
+      return Math.exp(2.72 * (0.434 * Math.log(B)) ** 0.647)
+    }
   }
 
   _mainCalculation(
@@ -213,11 +255,16 @@ export class FwiService {
     );
     const mISI = this.calcISI(windSpeed, intermediateFFMC);
 
+    const mBUI = this.calcBUI(mDMC, mDC);
+    const mFWI = this.calcFWI(mISI, mBUI);
+
     return {
       mFFMC,
       mDMC,
       mDC,
       mISI,
+      mBUI,
+      mFWI,
     }
   }
 }

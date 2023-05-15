@@ -28,6 +28,8 @@ describe('FwiService', () => {
       DMC: 10.4,
       DC: 23.6,
       ISI: 8.8,
+      BUI: 10.4,
+      FWI: 9.3,
     }
   }, {
     month: 3,
@@ -43,6 +45,8 @@ describe('FwiService', () => {
       DMC: 11.8,
       DC: 26.1,
       ISI: 6.5,
+      BUI: 11.7,
+      FWI: 7.6,
     }
   }, {
     month: 3,
@@ -58,6 +62,8 @@ describe('FwiService', () => {
       DMC: 13.2,
       DC: 28.2,
       ISI: 4.9,
+      BUI: 13.1,
+      FWI: 6.2,
     }
   }]
 
@@ -89,5 +95,15 @@ describe('FwiService', () => {
       service.calcIntermediateFFMC(testCase.Fo, testCase.H, testCase.T, testCase.W, testCase.ro)
     ))
       .toBeCloseTo(testCase.expected.ISI, 1);
+  });
+
+  it.each(testCases)('should calculate the BUI', (testCase) => {
+    expect(service.calcBUI(testCase.expected.DMC, testCase.expected.DC))
+      .toBeCloseTo(testCase.expected.BUI, 1);
+  });
+
+  it.each(testCases)('should calculate the FWI', (testCase) => {
+    expect(service.calcFWI(testCase.expected.ISI, testCase.expected.BUI))
+      .toBeCloseTo(testCase.expected.FWI, 0);
   });
 });
