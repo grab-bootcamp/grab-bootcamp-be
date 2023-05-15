@@ -29,7 +29,14 @@ export class StatisticController implements OnModuleInit {
       const { humidity, temperature, windSpeed, rainFall, condition, rawData } = await this.statisticService.getRealtimeWeatherData(lat, lng);
       const currentMonth = new Date().getMonth();
 
-      const { mFFMC, mDMC, mDC, mISI } = this.fwiService._mainCalculation(
+      const {
+        mFFMC,
+        mDMC,
+        mDC,
+        mISI,
+        mBUI,
+        mFWI,
+      } = this.fwiService._mainCalculation(
         humidity,
         temperature,
         windSpeed,
@@ -49,6 +56,8 @@ export class StatisticController implements OnModuleInit {
         mDMC,
         mDC,
         mISI,
+        mBUI,
+        mFWI,
         mHumidity: humidity,
         mWindSpeed: windSpeed,
         mTemperature: temperature,

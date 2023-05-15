@@ -26,14 +26,18 @@ export class StatisticService {
     private readonly httpService: HttpService,
   ) { }
 
-  getStatistic(mForestId: number, fromDate: Date, toDate: Date, cursor: number, size: number) {
+  getStatistic(mForestId: number, fromDate: Date, toDate: Date, cursor: Date | null, size: number) {
     const onCursorArgs = {}
     if (cursor) {
       onCursorArgs['cursor'] = {
-        mId: cursor
+        mForestId_mCreatedAt: {
+          mForestId,
+          mCreatedAt: cursor,
+        }
       }
       onCursorArgs['skip'] = 1
     }
+
     return this.prisma.statistic.findMany({
       where: {
         mForestId,
@@ -41,6 +45,21 @@ export class StatisticService {
           gte: fromDate,
           lte: toDate,
         },
+      },
+      select: {
+        mForestId: true,
+        mCreatedAt: true,
+        mFFMC: true,
+        mDMC: true,
+        mDC: true,
+        mISI: true,
+        mBUI: true,
+        mFWI: true,
+        mTemperature: true,
+        mWindSpeed: true,
+        mRainfall: true,
+        mHumidity: true,
+        mCondition: true,
       },
       ...onCursorArgs,
       take: size,
@@ -64,7 +83,7 @@ export class StatisticService {
     };
   }
 
-  async updateRealtimeWeatherData(data: Omit<Statistic, 'mId'>[]) {
+  async updateRealtimeWeatherData(data: (Omit<Statistic, 'mId' | 'mFireRisk'> & Partial<Pick<Statistic, 'mFireRisk'>>)[]) {
     return this.prisma.statistic.createMany({
       data,
       skipDuplicates: true,

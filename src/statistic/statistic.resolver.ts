@@ -11,7 +11,7 @@ export class StatisticResolver {
     @Args('forestId') mForestId: number,
     @Args('fromDate', { type: () => GraphQLISODateTime }) fromDate: Date,
     @Args('toDate', { type: () => GraphQLISODateTime }) toDate: Date,
-    @Args('cursor', { nullable: true, defaultValue: null }) cursor: number,
+    @Args('cursor', { type: () => GraphQLISODateTime, nullable: true, defaultValue: null }) cursor: Date,
     @Args('size', { defaultValue: 10 }) size: number,
   ) {
     return this.statisticService.getStatistic(mForestId, fromDate, toDate, cursor, size);

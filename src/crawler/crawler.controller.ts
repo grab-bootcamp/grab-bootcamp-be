@@ -44,9 +44,9 @@ export class CrawlerController {
       );
 
       const lastFwiData = fwiData.length > 0 ? {
-        Fo: fwiData[fwiData.length - 1].mFFMC,
-        Po: fwiData[fwiData.length - 1].mDMC,
-        Do: fwiData[fwiData.length - 1].mDC,
+        Fo: fwiData[0].mFFMC,
+        Po: fwiData[0].mDMC,
+        Do: fwiData[0].mDC,
       } : {
         Fo: DEFAULT_FWI_CONSTANTS.FFMC,
         Po: DEFAULT_FWI_CONSTANTS.DMC,
@@ -55,7 +55,7 @@ export class CrawlerController {
 
       const payloads = observations.map(observation => {
 
-        const { mFFMC, mDMC, mDC, mISI } = this.fwiService._mainCalculation(
+        const { mFFMC, mDMC, mDC, mISI, mBUI, mFWI } = this.fwiService._mainCalculation(
           observation.humidity,
           observation.temerature,
           observation.windSpeed,
@@ -73,6 +73,8 @@ export class CrawlerController {
           mDMC,
           mDC,
           mISI,
+          mBUI,
+          mFWI,
           mHumidity: observation.humidity,
           mWindSpeed: observation.windSpeed,
           mTemperature: observation.temerature,

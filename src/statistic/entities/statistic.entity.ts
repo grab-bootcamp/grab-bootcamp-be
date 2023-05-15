@@ -10,9 +10,6 @@ export type FwiForsestData = {
 }
 @ObjectType()
 export class Statistic implements PrismaStatistic {
-  @Field(() => ID)
-  mId: number;
-
   @Field(() => GraphQLISODateTime)
   mCreatedAt: Date;
 
@@ -29,6 +26,12 @@ export class Statistic implements PrismaStatistic {
   mISI: number;
 
   @Field(() => Float)
+  mBUI: number;
+
+  @Field(() => Float)
+  mFWI: number;
+
+  @Field(() => Float)
   mHumidity: number;
 
   @Field(() => Float)
@@ -40,6 +43,9 @@ export class Statistic implements PrismaStatistic {
   @Field(() => Float)
   mRainfall: number;
 
+  @Field(() => Float, { nullable: true })
+  mFireRisk: number;
+
   @Field(() => Int)
   mForestId: number;
 
@@ -47,5 +53,4 @@ export class Statistic implements PrismaStatistic {
   mCondition: Prisma.JsonValue;
 
   mRawData: Prisma.JsonValue;
-  pCreatedAt: string;
 }
