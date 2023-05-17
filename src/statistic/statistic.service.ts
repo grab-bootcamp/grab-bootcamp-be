@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { INTERVAL_HOUR_SCRAPING } from './entities';
 import { Statistic } from '@prisma/client';
+import { IPredictFireRiskPayload } from './interface';
 
 interface IRealtimeWeatherData {
   humidity: number;
@@ -98,6 +99,13 @@ export class StatisticService {
         }
       },
     });
+  }
+
+  async getFireRiskPrediction(payload: IPredictFireRiskPayload) {
+    const { data } = await this.httpService.axiosRef.get(
+      `${this.configService.getOrThrow('PREDICTION_APP_URL')}/predict?${Object.entries(payload).map(([key, value]) => `${key}=${value}`).join('&')}`
+    );
+    return parseFloat(data);
   }
 
   _getLatestPastTimeMark() {
