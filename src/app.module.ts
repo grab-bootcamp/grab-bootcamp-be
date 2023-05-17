@@ -15,6 +15,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { StatisticModule } from './statistic/statistic.module';
 import { CrawlerModule } from './crawler/crawler.module';
+import { MailModule } from './mail/mail.module';
 
 
 @Module({
@@ -48,7 +49,8 @@ import { CrawlerModule } from './crawler/crawler.module';
     NotificationModule,
     ScheduleModule.forRoot(),
     StatisticModule,
-    CrawlerModule
+    CrawlerModule,
+    MailModule
   ],
 })
 export class AppModule { }

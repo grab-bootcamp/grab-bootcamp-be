@@ -68,3 +68,12 @@ model Crawler {
   @@index([mCreatedAt(sort: Desc)])
   @@map("crawler")
 }
+
+model Subscriber {
+  mId           Int      @id @default(autoincrement()) @map("m_id")
+  mEmail        String   @unique @map("m_email")
+  mDisposeToken String   @unique @map("m_dispose_token")
+  mCreatedAt    DateTime @default(now()) @map("m_created_at")
+
+  @@map("subscriber")
+}
