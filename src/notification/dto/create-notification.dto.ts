@@ -1,8 +1,13 @@
 import { IsEnum, IsInt, IsOptional, IsString } from "class-validator";
 
 export enum NotificationType {
+  // info
   INFO = 'INFO',
+
+  // level 1 alert
   WARNING = 'WARNING',
+
+  // level 2 alert
   ALERT = 'ALERT'
 }
 
@@ -24,10 +29,10 @@ export class CreateNotificationDto {
   mImage?: string;
 
   @IsEnum(NotificationType)
-  mType: string;
+  mType: NotificationType;
 
   @IsEnum(NotificationSeverity)
-  mSeverity: string;
+  mSeverity: NotificationSeverity;
 
   @IsOptional()
   @IsInt()

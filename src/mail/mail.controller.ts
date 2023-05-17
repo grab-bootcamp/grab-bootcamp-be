@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { MailService } from './mail.service';
 import * as SendGrid from '@sendgrid/mail';
 import { OnEvent } from '@nestjs/event-emitter';
@@ -13,14 +13,7 @@ export class MailController {
   ) { }
 
   @OnEvent('mail.fanout')
-  @Get()
   async fanoutEmail(payload: SendEmailVariablesDto) {
-    payload = {
-      subject: 'Test',
-      title: 'Test',
-      content: 'Test',
-      redirectUrl: 'https://google.com',
-    }
     const doSendEmail = async (cursor: number) => {
       const subscribers = await this.mailService.getSubscribers(cursor);
 
@@ -35,6 +28,11 @@ export class MailController {
         },
         to: subscriber.mEmail,
         subject: payload.title,
+        headers: {
+          "X-Priority": "1",
+          "Priority": "Urgent",
+          "Importance": "high"
+        },
         dynamicTemplateData: {
           ...payload,
           unsubscribeUrl: `${this.configService.get('APP_URL')}/unsubscribe/${subscriber.mDisposeToken}`,
