@@ -56,7 +56,7 @@ export class MailController {
   }
 
   @Delete('/subscriber/:disposeToken')
-  removeSubscriber(@Param() disposeToken: string) {
+  removeSubscriber(@Param('disposeToken') disposeToken: string) {
     this.mailService.removeSubscriber(disposeToken);
   }
 }
