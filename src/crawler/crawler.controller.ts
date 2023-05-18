@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Logger, Patch } from '@nestjs/common';
 import { CrawlerService } from './crawler.service';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { StatisticService } from 'src/statistic/statistic.service';
@@ -8,12 +8,14 @@ import { CrawlerStatus } from './types';
 
 @Controller('crawler')
 export class CrawlerController {
+  private readonly logger: Logger = new Logger(CrawlerController.name);
+  
   constructor(
     private readonly crawlerService: CrawlerService,
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly statisticService: StatisticService,
     private readonly fwiService: FwiService,
-  ) { }
+    ) { }
 
   @Cron('*/5 * * * * *', {
     name: 'historical-statistics',
@@ -21,10 +23,11 @@ export class CrawlerController {
   async historicalStatistics() {
     const record = await this.crawlerService.getNextRecordToCrawl();
     try {
+      // No more records to crawl
       if (!record) {
-        // No more records to crawl
         const job = this.schedulerRegistry.getCronJob('historical-statistics');
-        console.log('No more records to crawl');
+        this.logger.log(' No more records to crawl');
+
         job.stop();
         return;
       }
@@ -97,7 +100,7 @@ export class CrawlerController {
     }
   }
 
-  @Post()
+  @Patch()
   toggleCrawler() {
     const job = this.schedulerRegistry.getCronJob('historical-statistics');
     if (job.running) {
