@@ -128,7 +128,7 @@ export class StatisticController implements OnModuleInit {
     const mFireRisk = await this.statisticService.getFireRiskPrediction(predictionFireRiskPayload);
 
     this._processNotification([{
-      mFireRisk: Math.round(mFireRisk * 100),
+      mFireRisk: Math.max(1, Math.min(99, Math.round(mFireRisk * 100))),
       mForestId: forestId
     }]);
   }

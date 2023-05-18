@@ -9,11 +9,11 @@ datasource db {
 }
 
 model Forest {
-  mId          Int     @id @default(autoincrement()) @map("m_id")
-  mName        String  @unique @map("m_name")
-  mImage       String @map("m_image")
+  mId          Int    @id @default(autoincrement()) @map("m_id")
+  mName        String @unique @map("m_name")
+  mCoordinates Json   @map("m_coordinates")
   mDescription String @map("m_description")
-  mCoordinates Json    @map("m_coordinates")
+  mImage       String @map("m_image")
 
   @@map("forest")
 }
@@ -33,7 +33,6 @@ model Notification {
   @@map("notification")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model Statistic {
   mForestId    Int      @map("m_forest_id")
   mCreatedAt   DateTime @map("m_created_at")
@@ -47,11 +46,9 @@ model Statistic {
   mTemperature Float    @map("m_temperature")
   mWindSpeed   Float    @map("m_wind_speed")
   mRainfall    Float    @map("m_rain_fall")
-
-  mFireRisk Float? @map("m_fire_risk")
-
-  mCondition Json @map("m_condition")
-  mRawData   Json @map("m_raw_data")
+  mCondition   Json     @map("m_condition")
+  mRawData     Json     @map("m_raw_data")
+  mFireRisk    Int?     @map("m_fire_risk")
 
   @@id([mForestId, mCreatedAt])
   @@index([mCreatedAt(sort: Desc)])
@@ -74,8 +71,8 @@ model Crawler {
 model Subscriber {
   mId           Int      @id @default(autoincrement()) @map("m_id")
   mEmail        String   @unique @map("m_email")
-  mDisposeToken String   @unique @map("m_dispose_token")
   mCreatedAt    DateTime @default(now()) @map("m_created_at")
+  mDisposeToken String   @unique @map("m_dispose_token")
 
   @@map("subscriber")
 }

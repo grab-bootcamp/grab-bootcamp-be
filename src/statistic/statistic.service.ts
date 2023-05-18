@@ -56,6 +56,7 @@ export class StatisticService {
         mISI: true,
         mBUI: true,
         mFWI: true,
+        mFireRisk: true,
         mTemperature: true,
         mWindSpeed: true,
         mRainfall: true,

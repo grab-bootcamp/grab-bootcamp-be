@@ -43,7 +43,7 @@ export class Statistic implements PrismaStatistic {
   @Field(() => Float)
   mRainfall: number;
 
-  @Field(() => Float, { nullable: true })
+  @Field(() => Int, { nullable: true })
   mFireRisk: number;
 
   @Field(() => Int)

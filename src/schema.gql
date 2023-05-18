@@ -43,7 +43,7 @@ type Statistic {
   mTemperature: Float!
   mWindSpeed: Float!
   mRainfall: Float!
-  mFireRisk: Float
+  mFireRisk: Int
   mForestId: Int!
   mCondition: JSON!
 }
