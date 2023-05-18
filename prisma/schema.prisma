@@ -9,9 +9,11 @@ datasource db {
 }
 
 model Forest {
-  mId          Int    @id @default(autoincrement()) @map("m_id")
-  mName        String @unique @map("m_name")
-  mCoordinates Json   @map("m_coordinates")
+  mId          Int     @id @default(autoincrement()) @map("m_id")
+  mName        String  @unique @map("m_name")
+  mImage       String @map("m_image")
+  mDescription String @map("m_description")
+  mCoordinates Json    @map("m_coordinates")
 
   @@map("forest")
 }

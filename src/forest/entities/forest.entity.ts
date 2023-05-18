@@ -6,10 +6,16 @@ import GraphQLJSON from 'graphql-type-json';
 export class Forest implements PrismaForest {
   @Field(() => ID)
   mId: number;
-
+  
   @Field(() => String)
   mName: string;
-
+  
   @Field(() => GraphQLJSON)
   mCoordinates: Prisma.JsonValue;
+
+  @Field(() => String)
+  mDescription: string;
+  
+  @Field(() => String)
+  mImage: string;
 }
