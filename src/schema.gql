@@ -6,6 +6,8 @@ type Forest {
   mId: ID!
   mName: String!
   mCoordinates: JSON!
+  mDescription: String!
+  mImage: String!
 }
 
 """
